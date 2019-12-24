@@ -16,7 +16,7 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
   if [[ $(($currentRound % 2)) -eq 0 ]]; then
     first="ich"
     case "$currentRound" in
-      1) numberOfZeros=3;;
+      0) numberOfZeros=3;;
       2) numberOfZeros=9;;
       4) numberOfZeros=15;;
       6) numberOfZeros=18;;
@@ -28,7 +28,7 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
 
   echo "Spiel gegen \033[32m$name\033[0m mit der game_id \033[32m$gameID\033[0m ($yourPoints:$opponentPoints [Runde $currentRound])"
   echo "Erster Spieler: $first, Anzahl Nullen: $numberOfZeros"
-  python auto-answers.py --gameID=$gameID --numberOfZeros=$numberOfZeros > /dev/null
+  python auto-answer.py --gameID=$gameID --numberOfZeros=$numberOfZeros > /dev/null
 	i=$(echo "$i+1" | bc)
 	state=$(cat games.txt | jq ".user.games | .[$i].opponent")
   turn=$(cat games.txt | jq -r ".user.games | .[$i].your_turn")
