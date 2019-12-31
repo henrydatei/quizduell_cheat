@@ -13,7 +13,7 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
 	yourPoints=$(cat games.txt | jq ".user.games | .[$i].your_answers" | grep "0" | wc -l | bc)
 	opponentPoints=$(cat games.txt | jq ".user.games | .[$i].opponent_answers" | grep "0" | wc -l | bc)
 
-  if [[ $(($currentRound % 2)) -eq 0 ]]; then
+  if [ $(echo "$currentRound % 2" | bc) -eq 0 ]; then
     first="ich"
     case "$currentRound" in
       0) numberOfZeros=3;;
