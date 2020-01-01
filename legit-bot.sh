@@ -19,6 +19,7 @@ tvSerien=0.35									# cat_id = 17
 imLabor=0.35									# cat_id = 7
 comics=0.35										# cat_id = 8
 die2000er=0.35								# cat_id = 15
+defaultrate=0.35
 
 createAnswer() {
 	randomNumber=$(python randomInt.py --min=1 --max=1000)
@@ -89,6 +90,7 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
 		 17) successrate=$tvSerien;;
 		 19) successrate=$medienUndUnterhaltung;;
 		 20) successrate=$kunstUndKultur;;
+		 *)  successrate=$defaultrate;;
 	esac
 
 	differenceInPoints=$(echo "$yourPoints - $opponentPoints" | bc)
