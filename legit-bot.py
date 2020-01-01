@@ -32,8 +32,8 @@ if lastAnswers is not None:
 else:
     answerArray = nextAnswers.split(",")
 
-answerArray = map(int, answerArray)
-print answerArray
+answerArray = list(map(int, answerArray))
+#print answerArray
 
 result = api.upload_round_answers(gameID, answerArray, category)
 

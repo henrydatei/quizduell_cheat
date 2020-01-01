@@ -95,13 +95,13 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
 
 	differenceInPoints=$(echo "$yourPoints - $opponentPoints" | bc)
 	if [ "$differenceInPoints" -ge 5 ]; then
-		correctedSuccessrate=$(echo "$successrate - ($differenceInPoints * 0.05)" | bc)
+		correctedSuccessrate=$(echo "$successrate - (($differenceInPoints - 4) * 0.05)" | bc)
 	fi
 	if [ "$differenceInPoints" -le 3 ] && [ "$differenceInPoints" -gt 0 ]; then
 		correctedSuccessrate=$(echo "$successrate + ((3 - $differenceInPoints) * 0.1)" | bc)
 	fi
 	if [ "$differenceInPoints" -le 0 ]; then
-		correctedSuccessrate=$(echo "$successrate + (-$differenceInPoints * 0.15)" | bc)
+		correctedSuccessrate=$(echo "$successrate + ((-1) * $differenceInPoints * 0.15)" | bc)
 	fi
 
 	answerlist=$(createAnswer $correctedSuccessrate)
@@ -119,7 +119,7 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
 	echo " - Auswahlmöglichkeiten der Kategorie: $categorysToChooseFrom=> $chosenCategory ($successrate -> $correctedSuccessrate)"
 	echo " - gesendete Antworten ($NumberOfAnswers müssen gesendet werden): $answerlist"
 
-	if [ "$currentRound" -eq 0 ]; then
+	if [ "$currentRound" -le 1 ]; then
 		python legit-bot.py --gameID=$gameID --category=$categoryNumber --nextAnswers=$answerlist
 	else
 		python legit-bot.py --gameID=$gameID --category=$categoryNumber --nextAnswers=$answerlist --lastAnswers=$yourAnswers
