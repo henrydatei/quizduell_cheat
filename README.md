@@ -10,7 +10,7 @@ The script `./special_quiz.sh` gives you the answers for the special quizzes aga
 I've also made a legit version (`./legit-bot.sh`) of my bot that won't play perfect games but tries to be a bit better than your opponent.
 
 #### Credits
-I used this repo for the communication with the quizduell api, thanks for that:[https://github.com/welljsjs/quizduellapi](https://github.com/welljsjs/quizduellapi)
+I used this repo for the communication with the quizduell api, thanks for that: [https://github.com/welljsjs/quizduellapi](https://github.com/welljsjs/quizduellapi)
 
 #### Disclaimer
 Quizduell is a registered trademark of FEO Media AB, Stockholm, SE registered in Germany and other countries. This project is an independent work and is in no way affiliated with, authorized, maintained, sponsored or endorsed by FEO Media AB.
