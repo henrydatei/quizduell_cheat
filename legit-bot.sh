@@ -22,19 +22,19 @@ die2000er=0.35								# cat_id = 15
 defaultrate=0.35
 
 createAnswer() {
-	randomNumber=$(python randomInt.py --min=1 --max=1000)
+	randomNumber=$(python python-scripts/randomInt.py --min=1 --max=1000)
 	grenzeFuerRichtig=$(echo "(1000 * $1)/1" | bc)
 	if [ "$randomNumber" -le "$grenzeFuerRichtig" ]; then
 		# right answer
 		answer=0
 	else
 		# wrong answer, choose answer from range 1 to 3
-		answer=$(python randomInt.py --min=1 --max=3)
+		answer=$(python python-scripts/randomInt.py --min=1 --max=3)
 	fi
 	echo "$answer"
 }
 
-python games.py > games.txt
+python python-scripts/games.py > games.txt
 
 i=0
 state=$(cat games.txt | jq ".user.games | .[$i].opponent")
@@ -48,7 +48,7 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
 	opponentPoints=$(cat games.txt | jq ".user.games | .[$i].opponent_answers" | grep "0" | wc -l | bc)
 	yourAnswers=$(cat games.txt | jq -c ".user.games | .[$i].your_answers" | cut -c 2- | rev | cut -c 2- | rev)
 
-	python answers.py --gameID=$gameID > answers.txt
+	python python-scripts/answers.py --gameID=$gameID > answers.txt
 	cat answers.txt | jq ".game.questions | .[] | .cat_id" | uniq -d > category_list.txt
 
 	if [ $(echo "$currentRound % 2" | bc) -eq 0 ]; then
@@ -68,7 +68,7 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
     esac
   fi
 
-	zufallszahl=$(python randomInt.py --min=1 --max=3)
+	zufallszahl=$(python python-scripts/randomInt.py --min=1 --max=3)
 	categoryNumber=$(echo "$zufallszahl - 1" | bc)
 	chosenCategory=$(echo "$categorysToChooseFrom" | cut -d " " -f$zufallszahl)
 	case "$chosenCategory" in
@@ -120,9 +120,9 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
 	echo " - gesendete Antworten ($NumberOfAnswers müssen gesendet werden): $answerlist"
 
 	if [ "$currentRound" -le 1 ]; then
-		python legit-bot.py --gameID=$gameID --category=$categoryNumber --nextAnswers=$answerlist
+		python python-scripts/legit-bot.py --gameID=$gameID --category=$categoryNumber --nextAnswers=$answerlist
 	else
-		python legit-bot.py --gameID=$gameID --category=$categoryNumber --nextAnswers=$answerlist --lastAnswers=$yourAnswers
+		python python-scripts/legit-bot.py --gameID=$gameID --category=$categoryNumber --nextAnswers=$answerlist --lastAnswers=$yourAnswers
 	fi
 
 	i=$(echo "$i+1" | bc)

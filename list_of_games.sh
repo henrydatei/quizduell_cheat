@@ -1,6 +1,6 @@
 #!/bin/sh
 
-python games.py > games.txt
+python python-scripts/games.py > games.txt
 
 i=0
 state=$(cat games.txt | jq ".user.games | .[$i].opponent")
