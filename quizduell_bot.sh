@@ -1,6 +1,17 @@
 #!/bin/sh
 
-python python-scripts/games.py > games.txt
+if [ -f account.txt ]; then
+  echo "Login information found in \033[32maccount.txt\033[0m."
+  username=$(cat account.txt | cut -d "|" -f1)
+  password=$(cat account.txt | cut -d "|" -f2)
+else
+  echo "No login information found. Creating file \033[32maccount.txt\033[0m."
+  read -p "Username: " username
+  read -p "Password: " password
+  echo "$username|$password" >> account.txt
+fi
+
+python python-scripts/games.py --username=$username --password=$password > games.txt
 
 i=0
 state=$(cat games.txt | jq ".user.games | .[$i].opponent")
@@ -28,7 +39,7 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
 
   echo "Spiel gegen \033[32m$name\033[0m mit der game_id \033[32m$gameID\033[0m ($yourPoints:$opponentPoints [Runde $currentRound])"
   echo "Erster Spieler: $first, Anzahl Nullen: $numberOfZeros"
-  python python-scripts/auto-answer.py --gameID=$gameID --numberOfZeros=$numberOfZeros > /dev/null
+  python python-scripts/auto-answer.py --gameID=$gameID --numberOfZeros=$numberOfZeros --username=$username --password=$password > /dev/null
 	i=$(echo "$i+1" | bc)
 	state=$(cat games.txt | jq ".user.games | .[$i].opponent")
   turn=$(cat games.txt | jq -r ".user.games | .[$i].your_turn")

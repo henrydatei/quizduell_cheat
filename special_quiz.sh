@@ -1,6 +1,17 @@
 #!/bin/sh
 
-python python-scripts/games.py > games.txt
+if [ -f account.txt ]; then
+  echo "Login information found in \033[32maccount.txt\033[0m."
+  username=$(cat account.txt | cut -d "|" -f1)
+  password=$(cat account.txt | cut -d "|" -f2)
+else
+  echo "No login information found. Creating file \033[32maccount.txt\033[0m."
+  read -p "Username: " username
+  read -p "Password: " password
+  echo "$username|$password" >> account.txt
+fi
+
+python python-scripts/games.py --username=$username --password=$password > games.txt
 
 i=0
 state=$(cat games.txt | jq ".user.quizzes | .[0].questions | .[$i]")

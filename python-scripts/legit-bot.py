@@ -9,12 +9,16 @@ parser.add_argument("--lastAnswers", required=False)
 parser.add_argument("--gameID")
 parser.add_argument("--nextAnswers")
 parser.add_argument("--category")
+parser.add_argument("--username")
+parser.add_argument("--password")
 
 args = parser.parse_args()
 gameID = args.gameID
 lastAnswers = args.lastAnswers
 nextAnswers = args.nextAnswers
 category = args.category
+username = args.username
+password = args.password
 
 # Load authenticated session from file to prevent unnecessary logins:
 cookie_jar = cookielib.MozillaCookieJar('cookie_file')
@@ -23,7 +27,7 @@ api = quizduell.QuizduellApi(cookie_jar)
 if os.access(cookie_jar.filename, os.F_OK):
     cookie_jar.load()
 else:
-    api.login_user('henrydatei', 'henrydatei')
+    api.login_user(username, password)
 
 api = quizduell.QuizduellApi(cookie_jar)
 

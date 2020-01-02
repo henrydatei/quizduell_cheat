@@ -21,6 +21,17 @@ comics=0.35										# cat_id = 8
 die2000er=0.35								# cat_id = 15
 defaultrate=0.35
 
+if [ -f account.txt ]; then
+  echo "Login information found in \033[32maccount.txt\033[0m."
+  username=$(cat account.txt | cut -d "|" -f1)
+  password=$(cat account.txt | cut -d "|" -f2)
+else
+  echo "No login information found. Creating file \033[32maccount.txt\033[0m."
+  read -p "Username: " username
+  read -p "Password: " password
+  echo "$username|$password" >> account.txt
+fi
+
 createAnswer() {
 	randomNumber=$(python python-scripts/randomInt.py --min=1 --max=1000)
 	grenzeFuerRichtig=$(echo "(1000 * $1)/1" | bc)
@@ -34,7 +45,7 @@ createAnswer() {
 	echo "$answer"
 }
 
-python python-scripts/games.py > games.txt
+python python-scripts/games.py --username=$username --password=$password > games.txt
 
 i=0
 state=$(cat games.txt | jq ".user.games | .[$i].opponent")
@@ -48,7 +59,7 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
 	opponentPoints=$(cat games.txt | jq ".user.games | .[$i].opponent_answers" | grep "0" | wc -l | bc)
 	yourAnswers=$(cat games.txt | jq -c ".user.games | .[$i].your_answers" | cut -c 2- | rev | cut -c 2- | rev)
 
-	python python-scripts/answers.py --gameID=$gameID > answers.txt
+	python python-scripts/answers.py --gameID=$gameID --username=$username --password=$password > answers.txt
 	cat answers.txt | jq ".game.questions | .[] | .cat_id" | uniq -d > category_list.txt
 
 	if [ $(echo "$currentRound % 2" | bc) -eq 0 ]; then
@@ -120,9 +131,9 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
 	echo " - gesendete Antworten ($NumberOfAnswers müssen gesendet werden): $answerlist"
 
 	if [ "$currentRound" -le 1 ]; then
-		python python-scripts/legit-bot.py --gameID=$gameID --category=$categoryNumber --nextAnswers=$answerlist
+		python python-scripts/legit-bot.py --gameID=$gameID --category=$categoryNumber --nextAnswers=$answerlist --username=$username --password=$password
 	else
-		python python-scripts/legit-bot.py --gameID=$gameID --category=$categoryNumber --nextAnswers=$answerlist --lastAnswers=$yourAnswers
+		python python-scripts/legit-bot.py --gameID=$gameID --category=$categoryNumber --nextAnswers=$answerlist --username=$username --password=$password --lastAnswers=$yourAnswers
 	fi
 
 	i=$(echo "$i+1" | bc)
