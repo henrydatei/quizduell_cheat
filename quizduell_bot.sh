@@ -1,7 +1,6 @@
 #!/bin/sh
 
 if [ -f account.txt ]; then
-  echo "Login information found in \033[32maccount.txt\033[0m."
   username=$(cat account.txt | cut -d "|" -f1)
   password=$(cat account.txt | cut -d "|" -f2)
 else
@@ -37,8 +36,10 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
     numberOfZeros=$(echo "($currentRound + 1) * 6" | bc)
   fi
 
-  echo "Spiel gegen \033[32m$name\033[0m mit der game_id \033[32m$gameID\033[0m ($yourPoints:$opponentPoints [Runde $currentRound])"
-  echo "Erster Spieler: $first, Anzahl Nullen: $numberOfZeros"
+  if [ "$1" != "api" ]; then
+    echo "Spiel gegen \033[32m$name\033[0m mit der game_id \033[32m$gameID\033[0m ($yourPoints:$opponentPoints [Runde $currentRound])"
+    echo "Erster Spieler: $first, Anzahl Nullen: $numberOfZeros"
+  fi
   python python-scripts/auto-answer.py --gameID=$gameID --numberOfZeros=$numberOfZeros --username=$username --password=$password > /dev/null
 	i=$(echo "$i+1" | bc)
 	state=$(cat games.txt | jq ".user.games | .[$i].opponent")

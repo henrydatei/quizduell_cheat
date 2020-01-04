@@ -22,7 +22,6 @@ die2000er=0.35								# cat_id = 15
 defaultrate=0.35
 
 if [ -f account.txt ]; then
-  echo "Login information found in \033[32maccount.txt\033[0m."
   username=$(cat account.txt | cut -d "|" -f1)
   password=$(cat account.txt | cut -d "|" -f2)
 else
@@ -123,12 +122,14 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
 		j=$(echo "($j + 1)/1" | bc)
 	done
 
-	echo "Spiel gegen \033[32m$name\033[0m mit der game_id \033[32m$gameID\033[0m ($yourPoints:$opponentPoints [Runde $currentRound])"
-	echo " - Meine letzten Antworten: $yourAnswers"
-	echo " - Punktedifferenz: $differenceInPoints"
-	echo " - Erster Spieler: $first"
-	echo " - Auswahlmöglichkeiten der Kategorie: $categorysToChooseFrom=> $chosenCategory ($successrate -> $correctedSuccessrate)"
-	echo " - gesendete Antworten ($NumberOfAnswers müssen gesendet werden): $answerlist"
+  if [ "$1" != "api" ]; then
+    echo "Spiel gegen \033[32m$name\033[0m mit der game_id \033[32m$gameID\033[0m ($yourPoints:$opponentPoints [Runde $currentRound])"
+  	echo " - Meine letzten Antworten: $yourAnswers"
+  	echo " - Punktedifferenz: $differenceInPoints"
+  	echo " - Erster Spieler: $first"
+  	echo " - Auswahlmöglichkeiten der Kategorie: $categorysToChooseFrom=> $chosenCategory ($successrate -> $correctedSuccessrate)"
+  	echo " - gesendete Antworten ($NumberOfAnswers müssen gesendet werden): $answerlist"
+  fi
 
 	if [ "$currentRound" -le 1 ]; then
 		python python-scripts/legit-bot.py --gameID=$gameID --category=$categoryNumber --nextAnswers=$answerlist --username=$username --password=$password
