@@ -9,6 +9,8 @@ The script `./special_quiz.sh` gives you the answers for the special quizzes aga
 
 I've also made a legit version (`./legit-bot.sh`) of my bot that won't play perfect games but tries to be a bit better than your opponent.
 
+With `start_games.sh` you can check how many games you have currently running and start new to have 5 games running any time.
+
 ### API mode
 I've added an API mode which allows you to get the results from my scripts in a computer readable form. Just add `api` as last argument when running a script to enter the API mode.
 - Example: `./list_of_games.sh` (normal output), `./list_of_games api` (API mode)
