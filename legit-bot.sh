@@ -144,5 +144,9 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
 	rm answers.txt
 	rm category_list.txt
 done
-
+if [ "$turn" = "false" ]; then
+	i=$(echo "$i+1" | bc)
+        state=$(cat games.txt | jq ".user.games | .[$i].opponent")
+        turn=$(cat games.txt | jq -r ".user.games | .[$i].your_turn")
+fi
 rm games.txt
