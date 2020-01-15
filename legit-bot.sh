@@ -50,7 +50,8 @@ i=0
 state=$(cat games.txt | jq ".user.games | .[$i].opponent")
 turn=$(cat games.txt | jq -r ".user.games | .[$i].your_turn")
 
-while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
+while [ "$state" != "null" ]; do
+  if [ "$turn" = "true" ]; then
 	name=$(echo "$state" | jq -r ".name")
 	gameID=$(cat games.txt | jq ".user.games | .[$i].game_id")
 	currentRound=$(cat games.txt | jq ".user.games | .[$i].cat_choices | length")
@@ -107,7 +108,7 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
 	if [ "$differenceInPoints" -ge 5 ]; then
 		correctedSuccessrate=$(echo "$successrate - (($differenceInPoints - 4) * 0.05)" | bc)
 	fi
-	if [ "$differenceInPoints" -le 3 ] && [ "$differenceInPoints" -gt 0 ]; then
+	if [ "$differenceInPoints" -le 4 ] && [ "$differenceInPoints" -gt 0 ]; then
 		correctedSuccessrate=$(echo "$successrate + ((3 - $differenceInPoints) * 0.1)" | bc)
 	fi
 	if [ "$differenceInPoints" -le 0 ]; then
@@ -143,10 +144,10 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
 
 	rm answers.txt
 	rm category_list.txt
+  fi
+  i=$(echo "$i+1" | bc)
+  state=$(cat games.txt | jq ".user.games | .[$i].opponent")
+  turn=$(cat games.txt | jq -r ".user.games | .[$i].your_turn")
 done
-if [ "$turn" = "false" ]; then
-	i=$(echo "$i+1" | bc)
-        state=$(cat games.txt | jq ".user.games | .[$i].opponent")
-        turn=$(cat games.txt | jq -r ".user.games | .[$i].your_turn")
-fi
+
 rm games.txt

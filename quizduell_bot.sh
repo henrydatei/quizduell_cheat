@@ -16,7 +16,8 @@ i=0
 state=$(cat games.txt | jq ".user.games | .[$i].opponent")
 turn=$(cat games.txt | jq -r ".user.games | .[$i].your_turn")
 
-while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
+while [ "$state" != "null" ]; do
+  if [ "$turn" = "true" ]; then
   name=$(echo "$state" | jq -r ".name")
   gameID=$(cat games.txt | jq ".user.games | .[$i].game_id")
   currentRound=$(cat games.txt | jq ".user.games | .[$i].cat_choices | length")
@@ -41,14 +42,10 @@ while [ "$state" != "null" ] && [ "$turn" = "true" ]; do
     echo "Erster Spieler: $first, Anzahl Nullen: $numberOfZeros"
   fi
   python python-scripts/auto-answer.py --gameID=$gameID --numberOfZeros=$numberOfZeros --username=$username --password=$password > /dev/null
+  fi
 	i=$(echo "$i+1" | bc)
 	state=$(cat games.txt | jq ".user.games | .[$i].opponent")
   turn=$(cat games.txt | jq -r ".user.games | .[$i].your_turn")
 done
-if [ "$turn" = "false" ]; then
-        i=$(echo "$i+1" | bc)
-        state=$(cat games.txt | jq ".user.games | .[$i].opponent")
-        turn=$(cat games.txt | jq -r ".user.games | .[$i].your_turn")
-fi
 
 rm games.txt
