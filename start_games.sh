@@ -15,8 +15,8 @@ i=1
 python python-scripts/games.py --username=$username --password=$password > games.txt
 
 allGames=$(cat games.txt | jq '.user.games | .[].state' | wc -l | bc)
-activeGames=$(cat games.txt | jq '.user.games | .[].state' | grep '0\|1' |wc -l | bc)
-gamesToStart=$(echo "5 - $activeGames" | bc)
+activeGames=$(cat games.txt | jq '.user.games | .[].state' | grep '1' |wc -l | bc)
+gamesToStart=$(echo "100 - $activeGames" | bc)
 
 if [ "$1" != "api" ]; then
   echo "Es wurden $allGames Spiele gefunden, davon sind noch $activeGames aktiv. Es werden noch $gamesToStart Spiele gestartet"
