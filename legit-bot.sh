@@ -1,25 +1,25 @@
 #!/bin/sh
 
 # successrates
-sportUndFreizeit=0.50					# cat_id = 11
-essenUndTrinken=0.50					# cat_id = 3
-glaubeUndReligion=0.50				# cat_id = 4
-kinofilme=0.50								# cat_id = 16
-wunderDerTechnik=0.50					# cat_id = 1
-draussenImGruenen=0.50				# cat_id = 9
-computerspiele=0.50						# cat_id = 14
-zeugenDerZeit=0.50						# cat_id = 6
-buecherUndWoerter=0.50				# cat_id = 2
-koerperUndGeist=0.50					# cat_id = 10
-rundUmDieWelt=0.50						# cat_id = 5
-machtUndGeld=0.50							# cat_id = 13
-medienUndUnterhaltung=0.50		# cat_id = 19
-kunstUndKultur=0.50						# cat_id = 20
-tvSerien=0.50									# cat_id = 17
-imLabor=0.50									# cat_id = 7
-comics=0.50										# cat_id = 8
-die2000er=0.50								# cat_id = 15
-defaultrate=0.50
+sportUndFreizeit=0.60					# cat_id = 11
+essenUndTrinken=0.60					# cat_id = 3
+glaubeUndReligion=0.60				# cat_id = 4
+kinofilme=0.60								# cat_id = 16
+wunderDerTechnik=0.60					# cat_id = 1
+draussenImGruenen=0.60				# cat_id = 9
+computerspiele=0.60						# cat_id = 14
+zeugenDerZeit=0.60						# cat_id = 6
+buecherUndWoerter=0.60				# cat_id = 2
+koerperUndGeist=0.60					# cat_id = 10
+rundUmDieWelt=0.60						# cat_id = 5
+machtUndGeld=0.60							# cat_id = 13
+medienUndUnterhaltung=0.60		# cat_id = 19
+kunstUndKultur=0.60						# cat_id = 20
+tvSerien=0.60									# cat_id = 17
+imLabor=0.60									# cat_id = 7
+comics=0.60										# cat_id = 8
+die2000er=0.60								# cat_id = 15
+defaultrate=0.60
 
 if [ -f account.txt ]; then
   username=$(cat account.txt | cut -d "|" -f1)
