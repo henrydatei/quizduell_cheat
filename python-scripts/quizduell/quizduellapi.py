@@ -13,40 +13,40 @@ class QuizduellApi(object):
     Inofficial interface to the Quizduell web API written in Python and
     distributed under GPLv3. Start games, answer questions, find users and
     more.
-    
+
     Quizduell is a registered trademark of FEO Media AB, Stockholm, SE
     registered in Germany and other countries. This project is an independent
     work and is in no way affiliated with, authorized, maintained, sponsored or
     endorsed by FEO Media AB.
     '''
-    
+
     # host_name = 'qkgermany.appspot.com'
     host_name = 'qkgermany.feoquizserver.com'
     ''' Each country uses a different host and authorization key'''
 
     authorization_key = 'AIcaqRff3zdCyoBT'
     ''' Each country uses a different host and authorization key'''
-    
+
     user_agent = 'Quizduell A gzip 1.9.8'
-    
+
     device_type = 'apl'
-    
+
     device_info = 'Moto X'
     ''' optional, e.g. motorola|Moto X|18 '''
-    
+
     android_id = ''
     ''' optional, e.g. e13d21e1-de6c-4bcd-b567-1eff1279b331 '''
-    
+
     timeout = 20000
-    
+
     password_salt = 'SQ2zgOTmQc8KXmBP'
-    
-    def __init__(self, cookie_jar=None, ssl_verify=True):
+
+    def __init__(self, cookie_jar=None, ssl_verify=False):
         '''
         Creates the API interface. Expects either an authentication cookie within
         the user supplied cookie jar or a subsequent call to
         QuizduellApi.login_user() or QuizduellApi.create_user().
-        
+
         @param ssl_verify: If set to False, SSL certificate verifications will be bypassed (True by default)
         @param cookie_jar: Stores authentication tokens with each request made
         @type cookie_jar: cookielib.CookieJar or None
@@ -54,14 +54,14 @@ class QuizduellApi(object):
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
-        
+
         self._opener = urllib2.build_opener(
             urllib2.HTTPRedirectHandler(),
             urllib2.HTTPHandler(debuglevel=0),
             urllib2.HTTPSHandler(debuglevel=0, context=None if ssl_verify else ctx),
             urllib2.HTTPCookieProcessor(cookie_jar)
         )
-    
+
     def create_user(self, name, password, email=None):
         '''
         Creates a new Quizduell user. The user will automatically be logged in.
@@ -71,7 +71,7 @@ class QuizduellApi(object):
             "settings": {...},
             "user": {...}
         }
-        
+
         @type name: str
         @type password: str
         @type email: str or None
@@ -83,20 +83,20 @@ class QuizduellApi(object):
         }
         if email != None:
             data['email'] = unicode(email).encode('utf-8')
-        
+
         return self._request('/users/create', data)
-    
+
     def login_user(self, name, password):
         '''
         Authenticates an existing Quizduell user. @attention: Any user can only
         log in 10 times every 24 hours! Returns the following JSON structure on
         success:
         {
-            "logged_in": true, 
-            "settings": {...}, 
+            "logged_in": true,
+            "settings": {...},
             "user": {...}
         }
-        
+
         @type name: str
         @type password: str
         @rtype: json.json
@@ -106,7 +106,7 @@ class QuizduellApi(object):
             'pwd': hashlib.md5(self.password_salt + unicode(password).encode('utf-8')).hexdigest()
         }
         return self._request('/users/login', data)
-    
+
     def update_user(self, name, password, email=None):
         '''
         Updates an existing Quizduell user. The user will automatically be
@@ -116,7 +116,7 @@ class QuizduellApi(object):
             "settings": {...},
             "user": {...}
         }
-        
+
         @type name: str
         @type password: str
         @type email: str or None
@@ -128,44 +128,44 @@ class QuizduellApi(object):
         }
         if email != None:
             data['email'] = unicode(email).encode('utf-8')
-        
+
         return self._request('/users/update_user', data)
-    
+
     def create_tv_user(self):
         '''
         Creates a TV user profile for this Quizduell user. Returns the following
         JSON structure on success:
         {
             "user": {
-                "avatar_code": ..., 
-                "blocked": [...], 
-                "email": ..., 
-                "friends": [...], 
-                "name": "...", 
-                "q_reviewer": ..., 
-                "qc": ..., 
-                "tt": "...", 
+                "avatar_code": ...,
+                "blocked": [...],
+                "email": ...,
+                "friends": [...],
+                "name": "...",
+                "q_reviewer": ...,
+                "qc": ...,
+                "tt": "...",
                 "user_id": "..."
             }
         }
-        
+
         @warning: Raises "HTTP Error 404: Not Found" while show is inactive!
         @rtype: json.json
         '''
         return self._request('/tv/create_tv_user', {})
-    
+
     def find_user(self, name):
         '''
         Looks for a Quizduell user with the given name. Returns the following
         JSON structure on success:
         {
             "u": {
-                "avatar_code": "...", 
-                "name": "...", 
+                "avatar_code": "...",
+                "name": "...",
                 "user_id": "..."
             }
         }
-        
+
         @type name: str
         @rtype: json.json
         '''
@@ -173,16 +173,16 @@ class QuizduellApi(object):
             'opponent_name': unicode(name).encode('utf-8')
         }
         return self._request('/users/find_user', data)
-    
+
     def add_friend(self, user_id):
         '''
         Adds another Quizduell user as a friend. Returns the following
         JSON structure on success:
         {
-            "popup_mess": "Du bist jetzt mit ... befreundet", 
+            "popup_mess": "Du bist jetzt mit ... befreundet",
             "popup_title": "Neuer Freund"
         }
-        
+
         @type friend_id: str
         @rtype: json.json
         '''
@@ -190,14 +190,14 @@ class QuizduellApi(object):
             'friend_id': user_id
         }
         return self._request('/users/add_friend', data)
-    
+
     def remove_friend(self, user_id):
         '''
         Removes a friend. Returns the following JSON structure on success:
         {
             "removed_id": "..."
         }
-        
+
         @type friend_id: str
         @rtype: json.json
         '''
@@ -205,21 +205,21 @@ class QuizduellApi(object):
             'friend_id': user_id
         }
         return self._request('/users/remove_friend', data)
-    
+
     def current_user_games(self):
         '''
         Lists invited, active and finished games. Returns the following JSON
         structure on success:
         {
-            "logged_in": true, 
-            "settings": {...}, 
+            "logged_in": true,
+            "settings": {...},
             "user": {...}
         }
-        
+
         @rtype: json.json
         '''
         return self._request('/users/current_user_games', {})
-    
+
     def get_game(self, game_id):
         '''
         Lists details of a game, including upcoming questions and their correct
@@ -227,42 +227,42 @@ class QuizduellApi(object):
         structure on success:
         {
             "game": {
-                "cat_choices": [...], 
-                "elapsed_min": ..., 
-                "game_id": ..., 
-                "messages": [], 
-                "opponent": {...}, 
-                "opponent_answers": [...], 
-                "questions": [...], 
-                "state": ..., 
-                "your_answers": [...], 
+                "cat_choices": [...],
+                "elapsed_min": ...,
+                "game_id": ...,
+                "messages": [],
+                "opponent": {...},
+                "opponent_answers": [...],
+                "questions": [...],
+                "state": ...,
+                "your_answers": [...],
                 "your_turn": false
             }
         }
-        
+
         @type game_id: str
         @rtype: json.json
         '''
         return self._request('/games/' + str(game_id))
-    
+
     def get_games(self, game_ids):
         '''
         Lists details of specified games, but without questions and answers.
         Returns the following JSON structure on success:
         {
             "games": [{
-                    "cat_choices": [...], 
-                    "elapsed_min": ..., 
-                    "game_id": ..., 
-                    "messages": [...], 
-                    "opponent": {...}, 
-                    "opponent_answers": [...], 
-                    "state": ..., 
-                    "your_answers": [...], 
+                    "cat_choices": [...],
+                    "elapsed_min": ...,
+                    "game_id": ...,
+                    "messages": [...],
+                    "opponent": {...},
+                    "opponent_answers": [...],
+                    "state": ...,
+                    "your_answers": [...],
                     "your_turn": ...
             }, ...]
         }
-        
+
         @type game_ids: array of int or str
         @rtype: json.json
         '''
@@ -270,7 +270,7 @@ class QuizduellApi(object):
             'gids': json.dumps([int(i) for i in game_ids])
         }
         return self._request('/games/short_games', data)
-    
+
     def update_avatar(self, avatar_code=None):
         '''
         Change the displayed avatar. An avatar is encoded in a numerical
@@ -288,7 +288,7 @@ class QuizduellApi(object):
         if avatar_code != None:
             data['avatar_code'] = avatar_code
         return self._request('/users/update_avatar', data)
-    
+
     def send_message(self, game_id, message):
         '''
         Send a message within a game. The message will be visible in all games
@@ -296,10 +296,10 @@ class QuizduellApi(object):
         success:
         {
             "m": [{
-                "created_at": "..., 
-                "from": ..., 
-                "id": "...", 
-                "text": "...", 
+                "created_at": "...,
+                "from": ...,
+                "id": "...",
+                "text": "...",
                 "to": ...
             }]
         }
@@ -313,16 +313,16 @@ class QuizduellApi(object):
             'text': unicode(message).encode('utf-8')
         }
         return self._request('/games/send_message', data)
-    
+
     def forgot_password(self, email):
         '''
         Send a mail with a password restore link. Returns the following JSON
         structure on success:
         {
-            "popup_mess": "Eine E-Mail ... wurde an deine E-Mail gesendet", 
+            "popup_mess": "Eine E-Mail ... wurde an deine E-Mail gesendet",
             "popup_title": "E-Mail gesendet"
         }
-        
+
         @type email: email
         @rtype: json.json
         '''
@@ -330,146 +330,146 @@ class QuizduellApi(object):
             'email': unicode(email).encode('utf-8')
         }
         return self._request('/users/forgot_pwd', data)
-    
+
     def category_stats(self):
         '''
         Retrieves category statistics and ranking. Returns the following JSON
         structure on success:
         {
-            "cat_stats": [...], 
-            "n_games_lost": ..., 
-            "n_games_played": ..., 
-            "n_games_tied": ..., 
-            "n_games_won": ..., 
-            "n_perfect_games": ..., 
-            "n_questions_answered": ..., 
-            "n_questions_correct": ..., 
-            "n_users": ..., 
-            "rank": ..., 
+            "cat_stats": [...],
+            "n_games_lost": ...,
+            "n_games_played": ...,
+            "n_games_tied": ...,
+            "n_games_won": ...,
+            "n_perfect_games": ...,
+            "n_questions_answered": ...,
+            "n_questions_correct": ...,
+            "n_users": ...,
+            "rank": ...,
             "rating": ...
         }
-        
+
         @rtype: json.json
         '''
         return self._request('/stats/my_stats')
-    
+
     def game_stats(self):
         '''
         Retrieves game statistics per opponent. Returns the following JSON
         structure on success:
         {
             "game_stats": [{
-                "avatar_code": "...", 
-                "n_games_lost": ..., 
-                "n_games_tied": ..., 
-                "n_games_won": ..., 
-                "name": "...", 
+                "avatar_code": "...",
+                "n_games_lost": ...,
+                "n_games_tied": ...,
+                "n_games_won": ...,
+                "name": "...",
                 "user_id": "..."
             }, ...],
         }
-        
+
         @rtype: json.json
         '''
         return self._request('/stats/my_game_stats')
-    
+
     def category_list(self):
         '''
         Lists all available categories. Returns the following JSON structure on
         success:
         {
             "cats": {
-                "1": "Wunder der Technik", 
+                "1": "Wunder der Technik",
                 ...
             }
         }
-        
+
         @rtype: json.json
         '''
         return self._request('/web/cats')
-    
+
     def num_players(self):
         '''
         Lists the number of Quizduell players.
-        
+
         @rtype: int
         '''
         return self._request('/web/num_players')
-    
+
     def top_list_rating(self):
         '''
         Lists the top rated Quizduell players. Returns the following JSON
         structure on success:
         {
             "users": [{
-                "avatar_code": "...", 
-                "key": ..., 
-                "name": "...", 
+                "avatar_code": "...",
+                "key": ...,
+                "name": "...",
                 "rating": ...
             }, ...]
         }
-        
+
         @rtype: json.json
         '''
         return self._request('/users/top_list_rating')
-    
+
     def top_list_writers(self):
         '''
         Lists the top rated Quizduell players. Returns the following JSON
         structure on success:
         {
             "users": [{
-                "avatar_code": "...", 
-                "n_approved_questions": ..., 
+                "avatar_code": "...",
+                "n_approved_questions": ...,
                 "name": "..."
             }, ...]
         }
-        
+
         @rtype: json.json
         '''
         return self._request('/users/top_list_writers')
-    
+
     def start_random_game(self):
         '''
         Starts a game against a random opponent. Returns the following JSON
         structure on success:
         {
             "game": {
-                "cat_choices": [...], 
-                "elapsed_min": ..., 
-                "game_id": ..., 
-                "messages": [], 
-                "opponent": {...}, 
-                "opponent_answers": [...], 
-                "questions": [...], 
-                "state": 1, 
-                "your_answers": [...], 
+                "cat_choices": [...],
+                "elapsed_min": ...,
+                "game_id": ...,
+                "messages": [],
+                "opponent": {...},
+                "opponent_answers": [...],
+                "questions": [...],
+                "state": 1,
+                "your_answers": [...],
                 "your_turn": false
             }
         }
-        
+
         @rtype: json.json
         '''
         return self._request('/games/start_random_game')
-    
+
     def start_game(self, user_id):
         '''
         Starts a game against a given opponent. Returns the following JSON
         structure on success:
         {
             "game": {
-                "cat_choices": [...], 
-                "elapsed_min": ..., 
-                "game_id": ..., 
-                "messages": [], 
-                "opponent": {...}, 
-                "opponent_answers": [...], 
-                "questions": [...], 
-                "state": 1, 
-                "your_answers": [...], 
+                "cat_choices": [...],
+                "elapsed_min": ...,
+                "game_id": ...,
+                "messages": [],
+                "opponent": {...},
+                "opponent_answers": [...],
+                "questions": [...],
+                "state": 1,
+                "your_answers": [...],
                 "your_turn": false
             }
         }
-        
+
         @type opponent_id: str
         @rtype: json.json
         '''
@@ -477,18 +477,18 @@ class QuizduellApi(object):
             'opponent_id': user_id
         }
         return self._request('/games/create_game', data)
-    
+
     def give_up(self, game_id):
         '''
         Gives up a game. Returns the following JSON structure on success:
         {
-            "game": {...}, 
+            "game": {...},
             "popup": {
-                "popup_mess": "Du hast gegen ... aufgegeben\n\nRating: -24", 
+                "popup_mess": "Du hast gegen ... aufgegeben\n\nRating: -24",
                 "popup_title": "Spiel beendet"
             }
         }
-        
+
         @type game_id: int or str
         @rtype: json.json
         '''
@@ -496,19 +496,19 @@ class QuizduellApi(object):
             'game_id': str(game_id)
         }
         return self._request('/games/give_up', data)
-    
+
     def add_blocked(self, user_id):
         '''
         Puts another Quizduell user on the blocked list. Returns the following
         JSON structure on success:
         {
             "blocked": [{
-                "avatar_code": "...", 
-                "name": "...", 
+                "avatar_code": "...",
+                "name": "...",
                 "user_id": "..."
             }, ...]
         }
-        
+
         @type user_id: str
         @rtype: json.json
         '''
@@ -516,7 +516,7 @@ class QuizduellApi(object):
             'blocked_id': user_id
         }
         return self._request('/users/add_blocked', data)
-    
+
     def remove_blocked(self, user_id):
         '''
         Removes another Quizduell user from the blocked list. Returns the
@@ -524,7 +524,7 @@ class QuizduellApi(object):
         {
             "blocked": [...]
         }
-        
+
         @type user_id: str
         @rtype: json.json
         '''
@@ -532,7 +532,7 @@ class QuizduellApi(object):
             'blocked_id': user_id
         }
         return self._request('/users/remove_blocked', data)
-    
+
     def accept_game(self, game_id):
         '''
         Accept a game invitation. Returns the following JSON structure on
@@ -540,7 +540,7 @@ class QuizduellApi(object):
         {
             "t": true
         }
-        
+
         @type game_id: int or str
         @rtype: json.json
         '''
@@ -549,7 +549,7 @@ class QuizduellApi(object):
             'game_id': str(game_id)
         }
         return self._request('/games/accept', data)
-    
+
     def decline_game(self, game_id):
         '''
         Decline a game invitation. Returns the following JSON structure on
@@ -557,7 +557,7 @@ class QuizduellApi(object):
         {
             "t": true
         }
-        
+
         @type game_id: int or str
         @rtype: json.json
         '''
@@ -566,7 +566,7 @@ class QuizduellApi(object):
             'game_id': str(game_id)
         }
         return self._request('/games/accept', data)
-    
+
     def upload_round_answers(self, game_id, answers, category_id):
         '''
         Upload answers and the chosen category to an active game. Answers are
@@ -586,15 +586,15 @@ class QuizduellApi(object):
             "opponent": {...}
           }
         }
-        
+
         @type game_id: int or str
-        
+
         @param answers: values in {0,1,2,3,8,9} with 0 being correct
         @type answers: array of int or str
-        
+
         @param category_id: value in {0,1,2}
         @type category_id: int or str
-        
+
         @rtype: json.json
         '''
         data = {
@@ -602,9 +602,9 @@ class QuizduellApi(object):
             'answers': json.dumps([int(i) for i in answers]),
             'cat_choice': str(category_id)
         }
-        return self._request('/games/upload_round_answers', data)   
-    
-    @classmethod 
+        return self._request('/games/upload_round_answers', data)
+
+    @classmethod
     def _scramble_authorization_code(cls, data, key, reverse):
         result = ""
         reverse += 1
@@ -618,26 +618,26 @@ class QuizduellApi(object):
                 result += cls._scramble_authorization_code(data[l:], key, reverse)
             return result
         return data
-    
+
     @classmethod
     def _get_authorization_code(cls, url, client_date, post_params=None):
         msg = 'https://' + cls.host_name + url + client_date
-        
+
         if post_params:
             msg += ''.join(sorted(post_params.values()))
-        
+
         msg = re.sub(r'[^-abefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPRSTUXYZ012346789 ,.()]', '', msg)
-        
+
         for key in [2, 3, 5]:
             msg = cls._scramble_authorization_code(msg, key, 0);
-        
+
         dig = hmac.new(cls.authorization_key, msg=msg, digestmod=hashlib.sha256)
-        
+
         return base64.b64encode(dig.digest()).decode()
-    
+
     def _request(self, url, post_params=None):
         client_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        
+
         self._opener.addheaders = [
            ('dt', self.device_type),
            ('device-info', self.device_info),
@@ -647,12 +647,12 @@ class QuizduellApi(object):
            ('User-Agent', self.user_agent),
            ('clientdate', client_date)
         ]
-        
+
         if post_params != None:
             encoded_params = urllib.urlencode(post_params)
-            self._opener.addheaders.append(('Content-Length', str(len(encoded_params)))) 
+            self._opener.addheaders.append(('Content-Length', str(len(encoded_params))))
         else:
             encoded_params = None
-        
+
         response = self._opener.open('https://' + self.host_name + url, data=encoded_params, timeout=self.timeout)
         return json.loads(response.read())
